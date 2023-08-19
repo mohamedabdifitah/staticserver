@@ -9,10 +9,6 @@ const app = express()
 const port = 3000
 app.use("/static",express.static('upload'))
 app.use("/doc",express.static('doc'))
-// app.get('/doc', function(req, res) {
-//   res.sendFile(path.join(__dirname, 'doc/index.html'));
-// });
-
 // Set up storage for uploaded files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -29,6 +25,14 @@ const upload = multer({ storage: storage });
 app.post('/upload', upload.single('file'), (req, res) => {
   // Handle the uploaded file
   res.status(200).send("http://localhost:3000/static/"+req.file.filename)
+});
+app.post('/upload/photos', upload.array('photos',8), (req, res) => {
+  // Handle the uploaded file
+  let url = []
+  for (let i =0 ; i<req.files.length;i++){
+    url.push("http://localhost:3000/static/"+req.files[i].filename)
+  }
+  res.status(200).send(url)
 });
 
 app.listen(port, () => {
